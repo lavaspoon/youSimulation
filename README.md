@@ -1,70 +1,206 @@
-# Getting Started with Create React App
+# 통신사 콜센터 사내 시스템 (우수사례 시스템)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 프로젝트 개요
 
-## Available Scripts
+유선(인터넷/BTV) 콜센터의 **우수상담 사례 관리 시스템**을 고도화합니다.
+기존 단순 신청·승인 구조에서 AI 기반 게이미피케이션 플랫폼으로 전면 리뉴얼합니다.
 
-In the project directory, you can run:
+## 조직구조: 유선본부 - 각센터 -> 각실
 
-### `npm start`
+## 사용자 구분
+| 상담사 | 우수사례 신청, 스킬트리 달성, 미션 수행, 이달의 도전 참여, 본인의 랭킹, 전체 랭킹 
+| 관리자 | 우수콜 심사, 미션 등록, 스킬 등록, 이달의 고객 등록, 센터 랭킹 현황 조회 
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 기능 명세
 
-### `npm test`
+### 1. 상담사 화면
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+#### 1-1. 홈 대시보드
+- 상단: 이름, 레벨(캐릭터), 우수콜 건수, 누적 포인트, 실 내 랭킹 표시
+- 올해 스킬 달성 현황 프로그레스바 (달성 N / 전체 N)
+- 오늘의 미션 3개 위젯 (AI 추천, 매일 갱신)
+- 우수사례 신청하기 버튼 → 신청 모달
 
-### `npm run build`
+#### 1-2. 우수사례 신청 모달
+- 텍스트 입력: 어떤 상황이었나요? / 고객 반응은? / 내가 한 행동은?
+- AI 작성 도우미: 질문 3개 답변 기반 사유 자동 초안 생성
+- 제출 후 AI 사전 분석 결과 표시 (우수콜 가능성 점수 0~100, 감지된 키워드)
+- 승인 여부와 무관하게 신청 자체에 포인트 부여
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+#### 1-3. 상담 스킬트리
+- 오늘의 미션과 노드가 **복수**로 연결될 수 있으며, 미션 실천·달성으로 연결된 스킬이 함께 성장한다 (1-4 참고).
+- 트리 구조 시각화 (SVG 또는 Canvas 기반)
+- 노드 상태: 달성 완료(초록) / 도전 중-AI추천(파랑) / 잠금(회색)
+- 선행 스킬 달성 시 다음 스킬 해금
+- 각 노드: 스킬명, 난이도, 달성 포인트, 달성 기준 툴팁
+- AI 추천 노드는 별도 강조 표시 (황금색 테두리)
+- 연도별 트리 (매년 1월 1일 시즌 리셋, 과거 기록은 명예의 전당에 보존)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+**스킬 구조 예시 (관리자가 등록)**
+```
+상담 기초
+├── 공감 표현 → 감정 전환 유도, 경청 스킬
+├── 상품 이해 → 묶음 상품 제안, 업셀링 기법
+└── 마무리 멘트 → 해지 방어, 불만 처리
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+[고급]
+공감 심화 + 해지 방어 → VIP 고객 응대
+묶음 제안 + 업셀링 → 크로스셀 전략
+해지 방어 + 불만 처리 → 고난도 클로징
 
-### `npm run eject`
+[최종]
+모든 고급 스킬 → 올해의 상담 마스터
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+#### 1-4. 오늘의 미션
+- **미션 ↔ 스킬트리**: 각 미션은 스킬트리의 스킬을 **복수(N개)** 연결할 수 있으며, 미션을 달성·실천하면 연결된 스킬 각각의 진행도·숙련도가 상승한다 (포인트와 별개로 성장 축).
+- AI가 관리자 등록 미션 풀에서 개인 현황에 맞게 매일 3개 추천
+- 난이도 구성: 쉬움 1개 + 보통 1개 + 도전 1개 고정
+- 달성 시 포인트 즉시 적립
+- 미달성자, 슬럼프 구성원에게는 쉬운 미션 비중 자동 증가
+- 주간 미션 / 월간 빅 미션 별도 제공
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+**미션 예시**
+| 난이도 | 미션 | 포인트 |
+|--------|------|--------|
+| 쉬움 | 신청서에 고객 감정 한 줄 추가 | 50P |
+| 쉬움 | 동료 우수콜 3건 응원 | 100P |
+| 보통 | 묶음 상품 포함 콜 신청 | 150P |
+| 도전 | 해지 방어 콜 신청 | 250P |
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+#### 1-5. 이달의 고객 도전 (월 1회)
+- 관리자가 등록한 고객 페르소나를 기반으로 AI 시뮬레이션 고객 생성
+- 상담사가 채팅 형식으로 AI 고객과 대화
+- 사용 가능한 대화 전략은 달성한 스킬트리 범위 내로 제한
+- AI가 실시간으로 활용 스킬 감지 및 가이드 메시지 표시
+- 대화 종료 후 AI가 고객 긍정 요소 추출 분석 (감정 변화, 활용 스킬, 긍정 포인트)
+- 기준 점수 이상이면 특별 포인트 + 포상 대상 지정
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+#### 1-6. 랭킹 화면
+- 개인 랭킹: 센터 전체, 실 내 랭킹
+- 실 대항전: 실 단위 누적 우수콜 합산 순위
+- AI 라이벌 매칭: 나보다 1~2건 많은 동료 자동 지정, 역전 가능성 표시
+- 레벨별 리그 분리: 씨앗·새싹(신인 리그) / 나무·거목 이상(베테랑 리그)
 
-## Learn More
+#### 1-7. 게이미피케이션 요소
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+**월간 랩드 리포트 (매달 말일 자동 생성)**
+- 이달 나의 우수콜 유형 분석
+- 최다 활용 스킬, 최강 멘트 패턴
+- 실 내 기여도
+- 연말 연간 Wrapped 카드
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+**하위 구성원 참여 독려 장치**
+- 슬럼프 감지: 2달 이상 미신청 시 AI 따뜻한 메시지 자동 발송
+- 월초 AI 최소 목표 제안: "이번 달 딱 1건만 해볼까요?"
+- 신청서 AI 작성 도우미 (진입 장벽 제거)
+- 동료 응원 배지 (우수콜 없어도 달성 가능한 역할 부여)
+- 절대평가 미션 (상대방 없는 개인 목표)
 
-### Code Splitting
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### 2. 관리자 화면
 
-### Analyzing the Bundle Size
+#### 2-1. 우수콜 심사 리스트
+- 심사 대기 목록: AI 점수 높은 순 자동 정렬
+- 각 항목: 상담사명, 소속 실, 상품, 신청일, AI 사전 점수(0~100)
+- 필터: 전체 / AI 고점수 / 미처리
+- 상세 패널: 신청 사유 전문, AI 분석 요약, 감지된 키워드
+- 관리자 판단 버튼: 승인 / 보완 요청 / 반려
+- 안내: "녹취 청취 후 최종 판단" 문구 상시 표시
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+**AI 사전 분석 항목 (녹취 없이 텍스트만 분석)**
+- 우수콜 가능성 점수 (0~100)
+- 감지된 상담 스킬 키워드
+- 고객 감정 흐름 추정 (신청 텍스트 기반)
+- 유사 과거 승인 사례 비교
+- 판단 근거 요약
 
-### Making a Progressive Web App
+#### 2-2. 미션 풀 관리
+- 미션 등록: 미션명, 난이도(쉬움/보통/도전), 유형, 달성 조건, 대상(전체/특정 레벨/미신청자), 포인트
+- **연결 스킬**: 관리자가 설계한 스킬 트리(2-3)에서 **다중 선택**하여 미션에 매핑. 한 미션 → N개 스킬 연결 가능
+- 미션 활성화/비활성화 토글
+- AI 추천 대상 조건 설정 (누가 이 미션을 추천받을지)
+- 주간·월간 스페셜 미션 설정
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+#### 2-3. 스킬트리 관리
+- 스킬 **추가·등록**: 스킬명, 상위(부모) 스킬 선택으로 **트리 구조**를 확장 (관리자 화면에서 노드 추가)
+- 스킬 등록 상세: 난이도, 달성 기준, 선행 스킬 조건, 포인트 (확장 필드)
+- 트리 구조 편집 (선행 조건 연결)
+- 연도별 스킬트리 설계
+- 스킬별 달성자 수 현황
 
-### Advanced Configuration
+#### 2-4. 이달의 고객 도전 등록 (월 1회)
+- 입력 항목: 가명, 나이, 주요 상품, 상황·페르소나 설명
+- 개인정보 주의 문구 (실제 고객 정보 입력 금지, 가명·일반화만)
+- AI가 입력 정보 기반으로 시뮬레이션 고객 자동 생성
+- 도전 기간 설정, 성공 기준 점수 설정, 포상 포인트 설정
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+#### 2-5. 센터 현황 대시보드
+- 전체 참여율, 이달 우수콜 건수, 평균 AI 점수
+- 실별 우수콜 누적 현황 (바 차트)
+- 미참여 구성원 현황: 2달 이상 미신청자, 미션 달성률 0% 구성원
+- AI 슬럼프 알림 발송 현황
+- 심사 일관성 모니터링 (관리자별 승인률 편차)
 
-### Deployment
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## 포인트 시스템
 
-### `npm run build` fails to minify
+| 활동 | 포인트 |
+|------|--------|
+| 우수사례 신청 (승인 무관) | 30P |
+| 미션 달성 (난이도별 상이) | 50~250P |
+| 우수콜 승인 | 건당 100P |
+| 이달의 고객 도전 성공 | 800P |
+| 동료 응원 활동 | 10P/건 |
+| 스킬트리 달성 | 100~1000P |
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+**포인트 활용**
+- 연말 포상 기준 반영 (우수콜 건수 + 포인트 합산)
+- 포인트 상점: 커피 쿠폰, 조기 퇴근 추첨권, 프로필 꾸미기 아이템
+
+---
+
+## 기술 스택 (권장)
+
+- **Frontend**: React + TypeScript
+- **상태관리**: Zustand 또는 React Query
+- **스타일**: Tailwind CSS 또는 CSS Modules
+- **스킬트리 시각화**: **React Flow** (`reactflow`, 상담사 **나의 스킬** 화면)
+- **AI 연동**: Anthropic Claude API (`claude-sonnet-4-5` 모델)
+    - 우수콜 사전 분석 (텍스트만)
+    - 미션 개인 추천
+    - 이달의 고객 시뮬레이션 대화
+    - 슬럼프 알림 메시지 생성
+    - 월간 랩드 리포트 생성
+
+---
+
+## AI 활용 상세
+
+### AI가 할 수 있는 것 (텍스트·메타데이터만)
+1. 신청 사유 텍스트 분석 → 우수콜 가능성 점수 산출
+2. 과거 승인 사례 패턴 비교
+3. 미션 풀에서 개인 현황 기반 3개 추천
+4. 이달의 고객 페르소나 기반 시뮬레이션 대화
+5. 대화 중 실시간 스킬 감지 및 가이드
+6. 대화 종료 후 긍정 요소 추출
+7. 슬럼프 감지 및 개인화 메시지 생성
+8. 월간·연간 개인화 리포트 생성
+9. 심사 기준 일관성 모니터링
+
+### AI가 할 수 없는 것 (절대 금지)
+- 녹취 파일 접근·분석
+- 우수콜 최종 승인/반려 결정
+- 실제 고객 개인정보 처리
+---
+
+## 디자인 방향
+
+- Apple 의 디자인 철학처럼 깔끔하면서 사용자 편의성 제공
+- 화려한 색상 사용 금지
+- 화이트 톤 컨셉
+- 좌측 레이아웃 카테고리 선호
