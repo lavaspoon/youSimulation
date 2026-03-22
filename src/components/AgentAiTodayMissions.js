@@ -1,3 +1,28 @@
+/** 스킬 ID → 뱃지 색 변형 (트리 기본 스킬 + 기타는 해시 폴백) */
+function missionSkillPillVariant(skillId) {
+  const map = {
+    'skill-foundation': 'agent-mission-skill-pill--found',
+    'skill-empathy': 'agent-mission-skill-pill--empathy',
+    'skill-product': 'agent-mission-skill-pill--product',
+    'skill-closing': 'agent-mission-skill-pill--closing',
+    'skill-vip': 'agent-mission-skill-pill--vip',
+    'skill-cross': 'agent-mission-skill-pill--cross',
+    'root-base': 'agent-mission-skill-pill--root',
+  };
+  if (map[skillId]) return map[skillId];
+  const fallbacks = [
+    'agent-mission-skill-pill--alt0',
+    'agent-mission-skill-pill--alt1',
+    'agent-mission-skill-pill--alt2',
+    'agent-mission-skill-pill--alt3',
+  ];
+  let h = 0;
+  for (let i = 0; i < skillId.length; i += 1) {
+    h = (h * 31 + skillId.charCodeAt(i)) | 0;
+  }
+  return fallbacks[Math.abs(h) % fallbacks.length];
+}
+
 /**
  * @param {{
  *   id: string,
@@ -45,11 +70,12 @@ export default function AgentAiTodayMissions({
             >
               오늘의 미션
             </TitleTag>
-            <p className="agent-mission-today__lead">
-              미션마다 스킬트리 스킬을 <strong>여러 개</strong> 연결할 수 있으며, 깨면 연결된
-              스킬이 함께 성장합니다. 원하는 항목만 선택하거나, 선택 없이도 우수사례 신청을
-              진행할 수 있습니다.
-            </p>
+            {!embedded ? (
+              <p className="agent-mission-today__lead">
+                스킬트리와 <strong>여러 스킬</strong>을 연결할 수 있으며, 체크 시 숙련도에
+                반영됩니다.
+              </p>
+            ) : null}
           </div>
           {embedded ? (
             <button
@@ -102,7 +128,9 @@ export default function AgentAiTodayMissions({
                           {m.linkedSkills.map((s) => (
                             <span
                               key={s.id}
-                              className={`agent-mission-skill-pill${on ? ' agent-mission-skill-pill--on' : ''}`}
+                              className={`agent-mission-skill-pill ${missionSkillPillVariant(s.id)}${
+                                on ? ' agent-mission-skill-pill--on' : ''
+                              }`}
                             >
                               {s.name}
                             </span>

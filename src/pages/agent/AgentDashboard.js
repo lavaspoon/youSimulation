@@ -214,11 +214,9 @@ export default function AgentDashboard() {
             오늘의 미션 · 선정 현황
           </h2>
           <p className="agent-panel-unified-lead">
-            <strong>미션</strong>은 스킬트리의 스킬을 <strong>여러 개</strong> 동시에 연결할 수
-            있으며, 달성·실천 시 연결된 스킬 숙련도가 함께 오릅니다. 선택한 뒤 오른쪽에서 우수사례 신청을 하거나,{' '}
-            <strong>보유 포인트</strong>는 상단 프로필에서 확인하세요. 차트는{' '}
-            <strong>올해 12개월</strong> 선정 건수이며, 점을 누르면 우측에 그 달 내역이
-            열립니다. 우측 기본은 <strong>이번 달</strong>만 표시됩니다.
+            미션을 선택하면 <strong>연결 스킬</strong> 숙련도에 반영됩니다. 차트의{' '}
+            <strong>월</strong>을 누르면 우측 내역이 그 달로 바뀌고, 같은 월을 다시 누르면
+            이번 달로 돌아옵니다.
           </p>
           <div className="agent-mission-session-card">
             <AgentAiTodayMissions
@@ -270,10 +268,7 @@ export default function AgentDashboard() {
                     onMonthClick={handleChartMonthClick}
                   />
                 </div>
-                <p className="agent-chart-hint">
-                  월 점을 클릭하면 우측에 그 달만 표시됩니다. 같은 달을 다시 클릭하면
-                  이번 달 보기로 돌아갑니다.
-                </p>
+                <p className="agent-chart-hint">월 재클릭 시 이번 달 보기로 복귀</p>
                 <div className="agent-unified-chart-spacer" aria-hidden="true" />
               </div>
               <div className="agent-unified-list-col">

@@ -183,7 +183,7 @@ export function generateAiCustomer(now = Date.now()) {
  * @param {Record<string, number>} counts
  */
 export function areSimulationRequirementsMet(requirements, counts) {
-  if (!requirements.length) return false;
+  if (!requirements.length) return true;
   return requirements.every(
     (r) => getSkillStep(r.skillId, counts) >= r.minStep
   );

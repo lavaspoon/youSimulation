@@ -1,13 +1,55 @@
 /** 데모: 스킬 트리. 실서비스는 API로 대체. */
 
 export const DEFAULT_SKILLS = [
-  { id: 'root-base', name: '상담 기초', parentId: null },
-  { id: 'skill-foundation', name: '기초', parentId: 'root-base' },
-  { id: 'skill-empathy', name: '공감', parentId: 'root-base' },
-  { id: 'skill-product', name: '상품', parentId: 'root-base' },
-  { id: 'skill-closing', name: '마무리', parentId: 'root-base' },
-  { id: 'skill-vip', name: 'VIP 응대', parentId: 'skill-empathy' },
-  { id: 'skill-cross', name: '크로스셀', parentId: 'skill-product' },
+  {
+    id: 'root-base',
+    name: '상담 기초',
+    parentId: null,
+    summary:
+      '인사·경청·공감 표현·기본 예의 등 모든 상담의 바탕이 되는 태도와 절차를 다룹니다.',
+  },
+  {
+    id: 'skill-foundation',
+    name: '기초',
+    parentId: 'root-base',
+    summary:
+      '상담 오프닝, 본인 확인, 상황 파악 질문 등 초반 대화를 안정적으로 이끄는 기술입니다.',
+  },
+  {
+    id: 'skill-empathy',
+    name: '공감',
+    parentId: 'root-base',
+    summary:
+      '고객 감정을 인정하고 언어·톤으로 공감해 신뢰를 쌓고 방어를 낮춥니다.',
+  },
+  {
+    id: 'skill-product',
+    name: '상품',
+    parentId: 'root-base',
+    summary:
+      '요금제·부가서비스·약정 조건을 정확히 설명하고 고객 니즈에 맞게 제안합니다.',
+  },
+  {
+    id: 'skill-closing',
+    name: '마무리',
+    parentId: 'root-base',
+    summary:
+      '합의 내용을 정리하고 다음 액션·후속 안내까지 명확히 클로징합니다.',
+  },
+  {
+    id: 'skill-vip',
+    name: 'VIP 응대',
+    parentId: 'skill-empathy',
+    summary:
+      '우수·장기 고객에 맞는 톤과 혜택 설명, 불만 시 빠른 복구 제안을 다룹니다.',
+  },
+  {
+    id: 'skill-cross',
+    name: '크로스셀',
+    parentId: 'skill-product',
+    summary:
+      '기존 상품과 연계한 추가 상품·결합을 자연스럽게 제안하는 설득 기법입니다.',
+  },
 ];
 
 const STORAGE_KEY = 'you-demo-skills-v1';
@@ -36,6 +78,20 @@ export function saveSkills(skills) {
   if (typeof window === 'undefined') return;
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(skills));
   window.dispatchEvent(new CustomEvent(SKILL_TREE_CHANGED));
+}
+
+/**
+ * 스킬 개요(시뮬·프롬프트용). 저장값 없으면 기본 스킬 정의 또는 이름 기반 문장.
+ * @param {{ id: string, name: string, summary?: string }} skill
+ */
+export function resolveSkillSummary(skill) {
+  if (!skill) return '';
+  if (typeof skill.summary === 'string' && skill.summary.trim()) {
+    return skill.summary.trim();
+  }
+  const def = DEFAULT_SKILLS.find((d) => d.id === skill.id);
+  if (def?.summary) return def.summary;
+  return `${skill.name}에 관한 상담·응대 역량입니다.`;
 }
 
 export function addSkill(name, parentId) {
